@@ -93,10 +93,17 @@ migrate_working_dir/
 # Signing and secrets
 *.mobileprovision
 *.p12
+*.p8
+*.pfx
+*.pem
+*.key
+*.der
+*.crt
 *.cer
 *.certSigningRequest
 .env
 .env.*
+!.env.example
 key.properties
 ExportOptions.plist
 
