@@ -8,6 +8,21 @@
 
 **Input**: User description: "The app will have a splash screen displaying an image and will then go to a single main screen that will display altitude in feet. The app will get the data from the phone GPS."
 
+## Clarifications
+
+### Session 2026-10-27
+
+- Q: When should a reading stop being shown as current? → A: After 30 seconds without an update, show the "waiting for GPS" state.
+- Q: Should the main screen show GPS vertical accuracy? → A: Yes, show ± accuracy in feet when available.
+- Q: Which orientations are supported? → A: Portrait only.
+
+### Session 2026-10-28
+
+- Q: What counts as an update for the 30-second stale rule? → A: Only a position with a valid altitude resets the timer; a position without altitude shows "Altitude unavailable" immediately.
+- Q: Should the permanently-denied message include an Open Settings button? → A: Yes.
+- Q: What accessibility support is required? → A: None specific (out of scope for v1).
+- Q: What triggers the reducedAccuracy flag? → A: Only when reported vertical accuracy is worse than ±50 ft.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - See current altitude in feet (Priority: P1)
@@ -73,14 +88,19 @@ message appears instead of a number.
 
 - The user is indoors or has a weak GPS signal: no stale or invented value is shown; a waiting or
   unavailable state is shown instead.
-- Permission is granted with approximate (reduced accuracy) location only: the app informs the user
-  that altitude may be inaccurate or unavailable.
+- Reported vertical accuracy is worse than ±50 ft: the altitude is still shown, with a visible
+  low-accuracy flag.
 - The device reports no altitude value even with a position fix: show an "altitude unavailable"
-  message.
+  message immediately, never the previous altitude.
 - Altitude is negative (below sea level): the negative value is displayed correctly.
-- The app is backgrounded and resumed: the display refreshes to current data.
-- Location permission is requested for the first time: the splash screen is not blocked by the
-  permission prompt.
+- The app is backgrounded and resumed: permission and location-services status are re-checked and
+  the display refreshes to current data.
+- Location permission is requested at launch: the splash screen is not blocked; the system prompt
+  appears over the main screen, which shows the "waiting for GPS" state until the user answers.
+- A failure state is resolved (permission granted, location services turned on, fix acquired): the
+  screen recovers to a live reading automatically, with no restart.
+- Status changes in quick succession: the screen shows only the latest state, with no stale
+  intermediate messages.
 
 ## Requirements *(mandatory)*
 
@@ -94,12 +114,31 @@ message appears instead of a number.
 - **FR-005**: The altitude MUST be displayed in feet, with the unit labeled.
 - **FR-006**: The displayed altitude MUST update as the device's altitude changes while the screen
   is open.
-- **FR-007**: The app MUST request location permission (while-in-use only) with a clear
-  explanation of why it is needed.
-- **FR-008**: The app MUST show distinct, understandable messages for: permission denied, location
-  services disabled, waiting for GPS fix, and altitude unavailable.
+- **FR-007**: The app MUST request precise (fine) location permission, while-in-use only, when the
+  app launches, with a clear explanation of why it is needed. The system permission prompt appears
+  over the main screen (after the splash screen).
+- **FR-008**: The app MUST show distinct messages for each non-live state:
+  - waiting for GPS fix: "Waiting for GPS…" with a progress indicator (permission granted, no
+    valid altitude received yet, or none for 30 seconds);
+  - altitude unavailable: "Altitude unavailable" (a position arrived without a usable altitude;
+    a non-finite value counts as unusable);
+  - permission denied: explains location access is required; when permanently denied, also shows an
+    "Open Settings" button that opens this app's settings;
+  - location services disabled: asks the user to turn on Location Services.
 - **FR-009**: The app MUST NOT display stale or fabricated altitude values as if they were live.
+  Only a position with a valid altitude counts as an update; if none arrives for 30 seconds, the
+  app MUST switch to the "waiting for GPS" state.
 - **FR-010**: The app MUST NOT store or transmit location data.
+- **FR-011**: When the phone reports vertical accuracy, the main screen MUST show it in feet as
+  "± N ft" beneath the altitude; when not reported, the accuracy line is omitted.
+- **FR-012**: The app MUST support portrait orientation only.
+- **FR-013**: The app MUST set a "reducedAccuracy" flag when the reported vertical accuracy is worse
+  than ±50 ft (about 15 m), and MUST display a visible low-accuracy indicator while still showing
+  the altitude.
+- **FR-014**: Altitude and accuracy MUST be rounded to whole feet for display.
+- **FR-015**: The app MUST re-check permission and location-services status when it returns to the
+  foreground and MUST recover automatically from any failure state once the cause is resolved.
+- **FR-016**: The app MUST NOT write location values to logs.
 
 ### Key Entities
 
@@ -132,4 +171,11 @@ message appears instead of a number.
 - The splash screen shows for a short fixed time (about 2 seconds).
 - Only feet are supported; a meters toggle, history, maps, and settings are out of scope.
 - Only foreground use is supported; no background tracking.
+- Landscape orientation is out of scope.
+- Accessibility features beyond platform defaults (VoiceOver labels, tuned text scaling) are out of
+  scope for v1.
+- The phone's location service reports altitude in meters and, usually, a vertical accuracy; when
+  accuracy is missing the accuracy line is omitted.
+- Update frequency is set by the phone's location service; the 30-second stale limit is far above
+  its normal interval.
 - The phone has GPS hardware; no internet connection is required.

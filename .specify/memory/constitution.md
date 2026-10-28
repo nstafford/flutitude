@@ -6,7 +6,8 @@ Added sections: Core Principles I–V, Platform & Technical Constraints, Develop
 Removed sections: none
 Deferred TODOs: none
 Note: .specify/scripts/bash/resolve-template.sh could not run (no bash on Windows host);
-the existing on-disk scaffold (stock template) was used as the structure.
+the existing on-disk scaffold (stock template) was used as the structure.  I therefore manually
+changed the settings to "ps" and copied the powershell scripts to .specify/scripts/powershell
 -->
 # Flutitude Constitution
 
