@@ -1,4 +1,4 @@
-# Spec Kit machine & session-local state
+	# Spec Kit machine & session-local state
 .specify/feature.json
 .specify/extensions/*/local-config.yml
 .specify/extensions/.cache/
