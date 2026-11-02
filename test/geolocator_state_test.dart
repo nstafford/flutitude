@@ -20,12 +20,6 @@ void main() {
     }
   });
 
-  test('accuracy over 50 ft flags reducedAccuracy', () {
-    expect(r(accuracy: 15).reducedAccuracy, isFalse); // ~49.2 ft
-    expect(r(accuracy: 16).reducedAccuracy, isTrue); // ~52.5 ft
-    expect(r().reducedAccuracy, isFalse);
-  });
-
   test('invalid accuracy values are dropped', () {
     final s = statusFromMeasurement(
       altitudeMeters: 5,

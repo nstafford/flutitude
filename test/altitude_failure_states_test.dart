@@ -60,7 +60,7 @@ void main() {
     expectNoAltitude();
   });
 
-  testWidgets('reduced accuracy still shows altitude with indicator', (
+  testWidgets('poor accuracy shows altitude and accuracy value only', (
     tester,
   ) async {
     await pumpWith(
@@ -74,7 +74,8 @@ void main() {
       ),
     );
     expect(find.text('328 ft'), findsOneWidget);
-    expect(find.text('Low accuracy'), findsOneWidget);
+    expect(find.text('± 98 ft'), findsOneWidget);
+    expect(find.text('Low accuracy'), findsNothing);
   });
 
   testWidgets('resume re-subscribes and recovers from failure', (tester) async {

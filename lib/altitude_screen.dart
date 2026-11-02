@@ -72,16 +72,6 @@ class _AltitudeScreenState extends State<AltitudeScreen>
               '± ${formatMetersAsFeet(reading.accuracyMeters!)}',
               style: theme.textTheme.titleMedium,
             ),
-          if (reading.reducedAccuracy)
-            Padding(
-              padding: const EdgeInsets.only(top: 12),
-              child: Text(
-                'Low accuracy',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: theme.colorScheme.error,
-                ),
-              ),
-            ),
         ],
       ),
       Waiting() => Column(

@@ -22,7 +22,6 @@ void main() {
     await tester.pump();
     expect(find.text('3,281 ft'), findsOneWidget);
     expect(find.text('± 10 ft'), findsOneWidget);
-    expect(find.text('Low accuracy'), findsNothing);
 
     service.emit(Available(reading(1001)));
     await tester.pump();

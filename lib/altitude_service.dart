@@ -1,8 +1,5 @@
 import 'dart:async';
 
-import 'units.dart';
-
-const double reducedAccuracyThresholdFeet = 50;
 const Duration fixInterval = Duration(minutes: 1);
 const Duration fixTimeout = Duration(seconds: 20);
 // Must exceed fixInterval + fixTimeout so a healthy reading never expires.
@@ -18,10 +15,6 @@ class AltitudeReading {
   final double meters;
   final double? accuracyMeters;
   final DateTime timestamp;
-
-  bool get reducedAccuracy =>
-      accuracyMeters != null &&
-      metersToFeet(accuracyMeters!) > reducedAccuracyThresholdFeet;
 }
 
 sealed class LocationStatus {
