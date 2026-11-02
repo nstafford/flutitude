@@ -8,6 +8,7 @@ class FakeAltitudeService implements AltitudeService {
   final LocationStatus initial;
   int watchCount = 0;
   int openSettingsCount = 0;
+  int pauseCount = 0;
   StreamController<LocationStatus>? _controller;
 
   void emit(LocationStatus status) => _controller?.add(status);
@@ -21,6 +22,9 @@ class FakeAltitudeService implements AltitudeService {
     controller.onListen = () => controller.add(initial);
     return controller.stream;
   }
+
+  @override
+  void pause() => pauseCount++;
 
   @override
   Future<void> openSettings() async => openSettingsCount++;

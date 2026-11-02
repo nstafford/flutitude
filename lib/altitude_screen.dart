@@ -26,6 +26,8 @@ class _AltitudeScreenState extends State<AltitudeScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       setState(() => _stream = widget.service.watch());
+    } else {
+      widget.service.pause();
     }
   }
 

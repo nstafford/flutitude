@@ -3,7 +3,10 @@ import 'dart:async';
 import 'units.dart';
 
 const double reducedAccuracyThresholdFeet = 50;
-const Duration stalenessTimeout = Duration(seconds: 30);
+const Duration fixInterval = Duration(minutes: 1);
+const Duration fixTimeout = Duration(seconds: 20);
+// Must exceed fixInterval + fixTimeout so a healthy reading never expires.
+const Duration stalenessTimeout = Duration(seconds: 100);
 
 class AltitudeReading {
   const AltitudeReading({
@@ -51,6 +54,9 @@ abstract class AltitudeService {
   /// Emits the current status immediately, then on every change.
   /// Each call starts a fresh check of services and permission.
   Stream<LocationStatus> watch();
+
+  /// Stops taking fixes (e.g. app backgrounded). Call [watch] again to resume.
+  void pause();
 
   Future<void> openSettings();
 

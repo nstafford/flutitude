@@ -35,14 +35,14 @@ void main() {
     expect(s.reading.accuracyMeters, isNull);
   });
 
-  test('no valid altitude for 30 s switches available to waiting', () {
+  test('no valid altitude within the staleness timeout switches to waiting', () {
     fakeAsync((async) {
       final source = StreamController<LocationStatus>();
       final seen = <LocationStatus>[];
       withStaleness(source.stream).listen(seen.add);
 
       source.add(Available(r()));
-      async.elapse(const Duration(seconds: 29));
+      async.elapse(stalenessTimeout - const Duration(seconds: 1));
       async.flushMicrotasks();
       expect(seen.last, isA<Available>());
 
