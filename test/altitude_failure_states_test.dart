@@ -82,6 +82,7 @@ void main() {
     expect(service.watchCount, 1);
 
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    expect(service.pauseCount, 1);
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
     await tester.pump();
     expect(service.watchCount, 2);
